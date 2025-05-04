@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zegar</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.cdnfonts.com/css/alarm-clock" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="https://cdn.pixabay.com/photo/2013/07/12/18/54/chronometer-153975_640.png">
+</head>
+<body>
+    
+<div class="container">
+
+    <div id="screen">
+        <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+    </div>
+
+    <div class="buttons">
+        <button onclick="time()" id="time" class="button-31" role="button">Aktualny czas</button>
+        <button onclick="stoperStart()" id="Start" class="button-31" role="button">Start</button>
+        <button onclick="stopAll()"  id="Stop" class="button-31" role="button">Stop</button>
+        <button onclick="reset()" id="Reset" class="button-31" role="button">Reset</button>
+    </div>
+
+</div>
+
+<script>
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+
+    let intervalStoper = null;
+    let intervalTime = null;
+
+    const time = () => {
+        stopAll();
+
+        let now = new Date();
+        hours = now.getHours();
+        minutes = now.getMinutes();
+        seconds = now.getSeconds();
+
+        updateDisplay();
+
+        intervalTime = setInterval(() => {
+            now = new Date();
+            hours = now.getHours();
+            minutes = now.getMinutes();
+            seconds = now.getSeconds();
+            updateDisplay();
+        }, 1000);
+    };
+
+    const stoperStart = () => {
+        if (intervalStoper) return; 
+
+        if (intervalTime) {
+            clearInterval(intervalTime);
+            intervalTime = null;
+
+            hours = 0;
+            minutes = 0;
+            seconds = 0;
+            updateDisplay();
+        }
+
+        intervalStoper = setInterval(() => {
+            seconds += 1;
+
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes += 1;
+
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours += 1;
+
+                    if (hours >= 24) {
+                        hours = 0;
+                    }
+                }
+            }
+
+            updateDisplay();
+        }, 1000);
+    };
+
+    const stopAll = () => {
+        if (intervalStoper) {
+            clearInterval(intervalStoper);
+            intervalStoper = null;
+        }
+        if (intervalTime) {
+            clearInterval(intervalTime);
+            intervalTime = null;
+        }
+    };
+
+    const reset = () => {
+        stopAll();
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+        updateDisplay();
+    };
+
+    const updateDisplay = () => {
+        document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+        document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+        document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+    };
+</script>
+
+</body>
+</html>
